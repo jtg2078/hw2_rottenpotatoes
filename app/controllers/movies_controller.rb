@@ -19,33 +19,30 @@ class MoviesController < ApplicationController
   		else
   			@movies = Movie.order(params[:sort]).all
   			session[:sort] = params[:sort]
-  			#flash[:ratings] = nil
   		end
   	else
   		if(params.has_key?(:ratings) == true)
   			if(params[:ratings].keys.nil? == false)
   				@movies = Movie.where(:rating => params[:ratings].keys)
-  				#flash[:sort] = nil
   				session[:ratings] = params[:ratings]
   				@saved_ratings = params[:ratings]
   			end
   		else
   			@movies = Movie.all
-  			#flash[:sort] = nil
-  			#flash[:ratings] = nil
+  			session[:sort] = nil
+  			session[:ratings] = nil
   		end
   	end
   	
-  	#if(session[:sort] != nil && session[:ratings] != nil)
-  	#	@movie = Movie.where(:rating => session[:ratings].keys).order(session[:sort]).all
-  	#	@movies = Movie.all
-  	#elsif(session[:sort] != nil)
-  	#	@movie = Movie.order(session[:sort]).all
-  	#elsif(session[:ratings] != nil)
-  	#	@movies = Movie.where(:rating => session[:ratings].keys)
-  	#else
-  	#	@movies = Movie.all
-  	#end
+  	if(session[:sort] != nil && session[:ratings] != nil)
+  		@movies = Movie.where(:rating => session[:ratings].keys).order(session[:sort]).all
+  	elsif(session[:sort] != nil)
+  		@movies = Movie.order(session[:sort]).all
+  	elsif(session[:ratings] != nil)
+  		@movies = Movie.where(:rating => session[:ratings].keys)
+  	else
+  		@movies = Movie.all
+  	end
   end
 
   def new
