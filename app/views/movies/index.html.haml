@@ -6,14 +6,14 @@
   - @all_ratings.each do |rating|
     = rating
     = check_box_tag "ratings[#{rating}]", 1,  @saved_ratings.nil? == false && @saved_ratings.has_key?(rating) == true ? true : false
-  = submit_tag 'Refresh'
+  = submit_tag 'Refresh', :id=>"ratings_submit"
 
 %table#movies
   %thead
     %tr
-      %th#title_header{ :class => should_hilite("title") }= link_to "Movie Title", movies_path({:sort=>"title", :ratings=>@saved_ratings})
+      %th{ :class => should_hilite("title") }= link_to "Movie Title", movies_path({:sort=>"title", :ratings=>@saved_ratings}), :id=>"title_header"
       %th Rating
-      %th#release_date_header{ :class => should_hilite("release_date") }= link_to "Release Date", movies_path({:sort=>"release_date", :ratings=>@saved_ratings})
+      %th{ :class => should_hilite("release_date") }= link_to "Release Date", movies_path({:sort=>"release_date", :ratings=>@saved_ratings}), :id=>"release_date_header"
       %th More Info
   %tbody
     - @movies.each do |movie|
