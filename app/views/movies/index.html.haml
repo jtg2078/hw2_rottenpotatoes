@@ -6,6 +6,7 @@
   - @all_ratings.each do |rating|
     = rating
     = check_box_tag "ratings[#{rating}]", 1,  @saved_ratings.nil? == false && @saved_ratings.has_key?(rating) == true ? true : false
+  = hidden_field_tag :sort, @saved_sort
   = submit_tag 'Refresh', :id=>"ratings_submit"
 
 %table#movies

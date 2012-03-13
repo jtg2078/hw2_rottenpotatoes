@@ -7,46 +7,45 @@ class MoviesController < ApplicationController
   end
 
   def index
-  	@all_ratings = Movie.ratings 
-  	if (params.has_key?(:sort) == true)
-  		if(params.has_key?(:ratings) == true)
-  			if(params[:ratings].keys.nil? == false)
-  				@movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort]).all
-  				session[:sort] = params[:sort]
-  				session[:ratings] = params[:ratings]
-  				@saved_ratings = params[:ratings]
-  			end
-  		else
-  			@movies = Movie.order(params[:sort]).all
-  			session[:sort] = params[:sort]
-  		end
-  	else
-  		if(params.has_key?(:ratings) == true)
-  			if(params[:ratings].keys.nil? == false)
-  				@movies = Movie.where(:rating => params[:ratings].keys)
-  				session[:ratings] = params[:ratings]
-  				@saved_ratings = params[:ratings]
-  			else
-  				@movies = Movie.all
-  				#session[:ratings] = nil
-  				#@saved_ratings = nil
-  			end
-  		else
-  			@movies = Movie.all
-  		end
+  	@all_ratings = Movie.ratings
+  	@saved_ratings = nil
+  	@saved_sort = nil
+  	
+  	#make it restful
+  	if((params.has_key?(:sort) == false && session.has_key?(:sort) == true) && (params.has_key?(:ratings) == false && session.has_key?(:ratings) == true))
+  		redirect_to :ratings=>session[:ratings], :sort=>session[:sort]
+  	elsif (params.has_key?(:sort) == false && session.has_key?(:sort) == true)
+  		redirect_to :sort=>session[:sort]
+  	elsif (params.has_key?(:ratings) == false && session.has_key?(:ratings) == true)
+  		redirect_to :ratings=>session[:ratings]
   	end
   	
-  	if(session[:sort] != nil && session[:ratings] != nil)
-  		@movies = Movie.where(:rating => session[:ratings].keys).order(session[:sort]).all
-  		@saved_ratings = session[:ratings]
-  	elsif(session[:sort] != nil)
-  		@movies = Movie.order(session[:sort]).all
-  	elsif(session[:ratings] != nil)
-  		@movies = Movie.where(:rating => session[:ratings].keys)
-  		@saved_ratings = session[:ratings]
+  	
+  	has_sort_filter = false
+  	has_ratings_filter = false
+  	
+  	if(params.has_key?(:sort) == true)
+  		has_sort_filter = true
+  		session[:sort] = params[:sort]
+  		@saved_sort = params[:sort]
+  	end
+  	
+  	if(params.has_key?(:ratings) == true)
+  		has_ratings_filter = true
+  		session[:ratings] = params[:ratings]
+  		@saved_ratings = params[:ratings]
+  	end
+  	
+  	if(has_sort_filter == true && has_ratings_filter == true)
+  		@movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort])
+  	elsif (has_sort_filter == true)
+  		@movies = Movie.order(params[:sort])
+  	elsif (has_ratings_filter == true)
+  		@movies = Movie.where(:rating => params[:ratings].keys)
   	else
   		@movies = Movie.all
   	end
+  
   end
 
   def new
